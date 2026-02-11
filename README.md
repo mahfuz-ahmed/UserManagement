@@ -1,26 +1,32 @@
 # User Management System
 
-A full-stack user management system with a C# Web API, React Frontend, and a System Monitoring Console application.
+A premium, high-performance full-stack user management system featuring a C# Web API, React Frontend, and a System Monitoring Console application.
 
 ## 🚀 Projects Included
 
 ### 1. User Management API (`/UserManagement`)
 - **Framework**: .NET 10.0 ASP.NET Core
-- **Database**: SQLite (standalone)
+- **Architecture**: Clean Architecture (Domain, Application, Infrastructure, API)
+- **Database**: SQLite (Automated migrations)
 - **Features**: 
-    - Individual and bulk user creation (10,000 users).
-    - Email validation and duplicate prevention.
-    - Distributed caching using `IMemoryCache`.
-    - Swagger/OpenAPI documentation.
+    - Single user registration with email validation.
+    - Bulk user creation (10,000+ users) with optimized performance.
+    - In-memory caching for lightning-fast user retrieval.
+    - CORS enabled for seamless frontend integration.
 
 ### 2. User Management UI (`/frontend/user-management-ui`)
 - **Library**: React
-- **Features**: User-friendly interface for managing users and viewing metrics (Dashboard).
+- **Design**: Premium glassmorphism UI with smooth animations and responsive layout.
+- **Features**:
+    - Real-time user directory with performance metrics.
+    - Interactive registration form with instant feedback.
+    - Bulk creation management.
 
 ### 3. System Monitor Console (`/SystemMonitor.Console`)
 - **Features**: 
     - Real-time CPU and Memory monitoring.
-    - Logs metrics every 10 seconds to `logs/metrics.log` using Serilog.
+    - Serilog integration for persistent metric logging.
+    - Logs saved to `logs/metrics.log`.
 
 ---
 
@@ -34,10 +40,10 @@ A full-stack user management system with a C# Web API, React Frontend, and a Sys
 
 #### 1. Run the API
 ```powershell
-cd UserManagement/UserManagement
+cd UserManagement
 dotnet run
 ```
-The API will be available at `http://localhost:5000` (check `Properties/launchSettings.json`).
+The API will be available at `http://localhost:5168`. You can view the OpenAPI/Swagger documentation to test the endpoints.
 
 #### 2. Run the Frontend
 ```powershell
@@ -45,6 +51,7 @@ cd frontend/user-management-ui
 npm install
 npm start
 ```
+The UI will open automatically at `http://localhost:3000`.
 
 #### 3. Run the System Monitor
 ```powershell
@@ -53,9 +60,9 @@ dotnet run
 ```
 
 ## 📝 Configuration
-- **SQLite Database**: The database file `UserManagement.db` is automatically created on startup. In development mode, the database is reset on every startup to ensure schema consistency.
-- **Logs**: System metrics are stored in `SystemMonitor.Console/logs/metrics.log`.
+- **SQLite Database**: The database file `UserManagement.db` is automatically created on startup. In development, the schema is initialized to ensure a clean state.
+- **API URL**: Configured in `frontend/user-management-ui/src/components` to match the backend port.
 
-## 🛡️ Validation
-- Emails must be in a valid format.
-- Duplicate emails are strictly prohibited at the database level.
+## 🛡️ Validation & Security
+- **Email Validation**: Enforced at both Frontend (HTML5) and Backend (Data Annotations).
+- **Concurrency & Performance**: Optimized bulk insertions and memory caching to handle large datasets efficiently.
