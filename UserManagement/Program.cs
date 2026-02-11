@@ -16,6 +16,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddMemoryCache();
 
 builder.Services.AddControllers();
+builder.Services.AddSwaggerGen();
 
 // Add CORS policy
 builder.Services.AddCors(options =>
@@ -56,6 +57,8 @@ using (var scope = app.Services.CreateScope())
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
 app.UseCors("AllowAll");
