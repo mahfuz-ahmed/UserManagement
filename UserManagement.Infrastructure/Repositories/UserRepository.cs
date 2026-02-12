@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using EFCore.BulkExtensions;
 using UserManagement.Domain.Entities;
 using UserManagement.Domain.Repositories;
 using UserManagement.Infrastructure.Persistence;
@@ -34,6 +35,11 @@ namespace UserManagement.Infrastructure.Repositories
         public async Task<User?> GetByEmailAsync(string email)
         {
             return await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
+        }
+
+        public async Task BulkInsertAsync(List<User> users)
+        {
+            await _context.BulkInsertAsync(users);
         }
     }
 }

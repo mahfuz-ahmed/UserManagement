@@ -1,11 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Memory;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using UserManagement.Application.Services;
-using UserManagement.Domain.Entities;
+using UserManagement.Application.DTOs;
 
 namespace UserManagement.API.Controllers
 {
@@ -14,31 +9,27 @@ namespace UserManagement.API.Controllers
     public class UsersController : ControllerBase
     {
         private readonly IUserService _userService;
-        private readonly IMemoryCache _cache;
-        private const string UsersCacheKey = "UsersList";
 
-        public UsersController(IUserService userService, IMemoryCache cache)
+        public UsersController(IUserService userService)
         {
             _userService = userService;
-            _cache = cache;
         }
 
         [HttpPost("create-users")]
-        public async Task<IActionResult> CreateUser([FromBody] User user)
+        public async Task<IActionResult> CreateUser([FromBody] CreateUserDto userDto)
         {
             try
             {
-                await _userService.CreateUserAsync(user);
-                _cache.Remove(UsersCacheKey); // Invalidate cache on change
-                return Ok(user);
+                var result = await _userService.CreateUserAsync(userDto);
+                return Ok(result);
             }
             catch (InvalidOperationException ex)
             {
                 return BadRequest(new { Message = ex.Message });
             }
-            catch (DbUpdateException)
+            catch (Exception)
             {
-                return BadRequest(new { Message = "A user with this email already exists in the database." });
+                return BadRequest(new { Message = "An error occurred while creating the user." });
             }
         }
 
@@ -46,21 +37,13 @@ namespace UserManagement.API.Controllers
         public async Task<IActionResult> CreateBulkUsers()
         {
             await _userService.CreateBulkUsersAsync(10000);
-            _cache.Remove(UsersCacheKey); // Invalidate cache on change
             return Ok(new { Message = "10,000 users created successfully." });
         }
 
         [HttpGet("fetch-users")]
         public async Task<IActionResult> FetchUsers()
         {
-            if (!_cache.TryGetValue(UsersCacheKey, out List<User>? users))
-            {
-                users = await _userService.GetUsersAsync();
-                var cacheOptions = new MemoryCacheEntryOptions()
-                    .SetSlidingExpiration(TimeSpan.FromMinutes(5));
-                _cache.Set(UsersCacheKey, users, cacheOptions);
-            }
-
+            var users = await _userService.GetUsersAsync();
             return Ok(users);
         }
     }

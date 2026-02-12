@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { userService } from '../api/userService';
 
 const UserForm = ({ onUserCreated }) => {
     const [formData, setFormData] = useState({
@@ -16,28 +17,17 @@ const UserForm = ({ onUserCreated }) => {
         setErrorMessage('');
         setSuccessMessage('');
         try {
-            const response = await fetch('http://localhost:5168/api/users/create-users', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    ...formData,
-                    age: parseInt(formData.age)
-                })
+            await userService.createUser({
+                ...formData,
+                age: parseInt(formData.age)
             });
 
-            if (response.ok) {
-                setFormData({ name: '', age: '', email: '' });
-                setSuccessMessage('User registered successfully!');
-                onUserCreated();
-            } else {
-                const errorData = await response.json();
-                setErrorMessage(errorData.message || 'Failed to create user.');
-            }
+            setFormData({ name: '', age: '', email: '' });
+            setSuccessMessage('User registered successfully!');
+            onUserCreated();
         } catch (error) {
             console.error('Error creating user:', error);
-            setErrorMessage('Network error. Please ensure the backend is running.');
+            setErrorMessage(error.message || 'Network error. Please ensure the backend is running.');
         } finally {
             setSubmitting(false);
         }

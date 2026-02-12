@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { userService } from '../api/userService';
 
 const UserTable = ({ refreshTrigger }) => {
     const [users, setUsers] = useState([]);
@@ -9,8 +10,7 @@ const UserTable = ({ refreshTrigger }) => {
         setLoading(true);
         const start = performance.now();
         try {
-            const response = await fetch('http://localhost:5168/api/users/fetch-users');
-            const data = await response.json();
+            const data = await userService.fetchUsers();
             setUsers(data);
         } catch (error) {
             console.error('Error fetching users:', error);
@@ -24,7 +24,7 @@ const UserTable = ({ refreshTrigger }) => {
     const handleBulkCreate = async () => {
         setLoading(true);
         try {
-            await fetch('http://localhost:5168/api/users/create-bulk-users', { method: 'POST' });
+            await userService.createBulkUsers();
             await fetchUsers();
         } catch (error) {
             console.error('Error creating bulk users:', error);

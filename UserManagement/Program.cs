@@ -3,6 +3,10 @@ using UserManagement.Application.Services;
 using UserManagement.Domain.Repositories;
 using UserManagement.Infrastructure.Persistence;
 using UserManagement.Infrastructure.Repositories;
+using UserManagement.Application.Mappings;
+using Microsoft.Extensions.Caching.Hybrid;
+using Garnet;
+using System.Threading.Tasks;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,7 +17,37 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IUserService, UserService>();
 
-builder.Services.AddMemoryCache();
+builder.Services.AddAutoMapper(cfg => cfg.AddProfile<MappingProfile>());
+
+// Start Garnet Server (Redis-compatible) in-process
+try
+{
+    // Using default settings for local hosting on 6379
+    var server = new GarnetServer(["--port", "6379", "--bind", "127.0.0.1"]);
+    _ = Task.Run(() => server.Start());
+    Console.WriteLine("Garnet server started on 127.0.0.1:6379");
+}
+catch (Exception ex)
+{
+    Console.WriteLine($"Failed to start Garnet server: {ex.Message}");
+}
+
+builder.Services.AddStackExchangeRedisCache(options =>
+{
+    options.Configuration = builder.Configuration.GetConnectionString("Redis");
+    options.InstanceName = "UserManagement_";
+});
+
+#pragma warning disable EXTEXP0018
+builder.Services.AddHybridCache(options =>
+{
+    options.DefaultEntryOptions = new HybridCacheEntryOptions
+    {
+        Expiration = TimeSpan.FromHours(1),
+        LocalCacheExpiration = TimeSpan.FromMinutes(5)
+    };
+});
+#pragma warning restore EXTEXP0018
 
 builder.Services.AddControllers();
 builder.Services.AddSwaggerGen();
