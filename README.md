@@ -8,10 +8,13 @@ A premium, high-performance full-stack user management system featuring a C# Web
 - **Framework**: .NET 10.0 ASP.NET Core
 - **Architecture**: Clean Architecture (Domain, Application, Infrastructure, API)
 - **Database**: SQLite (Automated migrations)
+- **Caching**: 
+    - **Microsoft Garnet Integration**: High-performance, Redis-compatible cache-store hosted in-process.
+    - **HybridCache & Redis**: Automated caching with fallback and invalidation.
 - **Features**: 
     - Single user registration with email validation.
     - Bulk user creation (10,000+ users) with optimized performance.
-    - In-memory caching for lightning-fast user retrieval.
+    - Automated Redis server startup (no manual configuration required).
     - CORS enabled for seamless frontend integration.
 
 ### 2. User Management UI (`/frontend/user-management-ui`)
@@ -61,7 +64,8 @@ dotnet run
 
 ## 📝 Configuration
 - **SQLite Database**: The database file `UserManagement.db` is automatically created on startup. In development, the schema is initialized to ensure a clean state.
-- **API URL**: Configured in `frontend/user-management-ui/src/components` to match the backend port.
+- **Automatic Redis Server**: The application embeds Microsoft Garnet, which starts a Redis-compatible server on `localhost:6379` automatically. No manual Redis installation is required.
+- **API URL**: Configured in `frontend/user-management-ui/src/config.js` (or similar) to match the backend port.
 
 ## 🛡️ Validation & Security
 - **Email Validation**: Enforced at both Frontend (HTML5) and Backend (Data Annotations).

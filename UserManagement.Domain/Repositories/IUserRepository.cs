@@ -10,5 +10,6 @@ namespace UserManagement.Domain.Repositories
         Task AddRangeAsync(IEnumerable<User> users);
         Task<List<User>> GetAllAsync();
         Task<User?> GetByEmailAsync(string email);
+        Task BulkInsertAsync(List<User> users);
     }
 }
