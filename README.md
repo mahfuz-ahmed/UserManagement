@@ -1,6 +1,6 @@
 # User Management System
 
-A premium, high-performance full-stack user management system featuring a C# Web API, React Frontend, and a System Monitoring Console application.
+A high-performance full-stack user management system featuring a C# Web API, React Frontend, and a System Monitoring Console application.
 
 ## 🚀 Projects Included
 
